@@ -11,7 +11,7 @@ private:
     Uncopyable& operator=(const Uncopyable&);
 };
 
-class Animal
+class Animal : private Uncopyable
 {
     public: 
         Animal(const std::string& name, const std::string& owner_name, unsigned int age):
