@@ -11,14 +11,26 @@ private:
     Uncopyable& operator=(const Uncopyable&);
 };
 
-class Animal : private Uncopyable
+class Person 
 {
     public: 
-        Animal(const std::string& name, const std::string& owner_name, unsigned int age):
+        Person(const std::string& name, unsigned int age):
         name(name),
-        owner_name(owner_name),
         age(age){};
+ 
+    private:
+        const std::string& name;
+        const unsigned int age;
+};
 
+class Animal
+{
+    public: 
+        Animal(const std::string& name, Person *owner, unsigned int age):
+        name(name),
+        owner(owner),
+        age(age){};
+    Animal& operator=(const Animal&);
     void eat()
     {
         std::cout<<"I am eating!"<<std::endl;
@@ -29,14 +41,22 @@ class Animal : private Uncopyable
     }
     protected:
         const std::string& name;
-        const std::string& owner_name;
         const unsigned int age;
+        Person *owner;
 };
+Animal& Animal::operator=(const Animal& rhs)
+{
+    Person *pOrig = owner; // remember original pb
+    owner = new Person(*rhs.owner); // point pb to a copy of rhs’s owner
+    delete pOrig; // delete the original pb
+    return *this;
+}
 
 class Dog: public Animal
 {
     public:
-        Dog (const std::string& name, const std::string& owner_name, unsigned int age) : Animal(name,owner_name, age){};
+        Dog (const std::string& name, Person *owner, unsigned int age) : Animal(name, owner, age){};
+
         void bark()
         {
             std::cout<<"Woof woof!"<<std::endl;
@@ -46,7 +66,7 @@ class Dog: public Animal
 class Cat: public Animal
 {
     public: 
-        Cat (const std::string& name, const std::string& owner_name, unsigned int age) : Animal (name, owner_name,age){};
+        Cat (const std::string& name, Person *owner, unsigned int age) : Animal (name, owner,age){};
         void meow()
         {
             std::cout<<"Meow!"<<std::endl;
@@ -55,17 +75,17 @@ class Cat: public Animal
 
 int main()
 {
-    Dog dog1("Azor", "Camelia", 2);
+
+    Person deiana("Deiana", 22);
+    Person camelia("Camelia", 22);
+
+    Dog dog1("Azor", &camelia, 2);
     dog1.bark();
     dog1.sleep();
 
-    Cat cat1("Thomas", "Deiana", 4);
+    Cat cat1("Thomas", &deiana, 4);
     cat1.eat();
     cat1.meow();
-
-    //This operations are illegal:
-    //Dog d2(d1); // the copy constructor is disallow
-    //Cat c2=c1; // the copy assigment operator is disallow
 
     return 0;
 }
