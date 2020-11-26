@@ -55,14 +55,24 @@ Animal& Animal::operator=(const Animal& rhs)
 class Dog: public Animal
 {
     public:
-        Dog (const std::string& name, Person *owner, unsigned int age) : Animal(name, owner, age){};
-
+        Dog (const std::string& name, Person *owner, unsigned int age, std::string color ): 
+        Animal(name, owner, age),
+        color(color){};
+        Dog& operator=(const Dog&);
         void bark()
         {
             std::cout<<"Woof woof!"<<std::endl;
         }
+    private:
+        std::string color;
 };
 
+Dog& Dog::operator=(const Dog& rhs)
+{
+    Animal::operator=(rhs); //assign base class parts
+    color=rhs.color;
+    return *this;
+}
 class Cat: public Animal
 {
     public: 
@@ -79,10 +89,11 @@ int main()
     Person deiana("Deiana", 22);
     Person camelia("Camelia", 22);
 
-    Dog dog1("Azor", &camelia, 2);
+    Dog dog1("Azor", &camelia, 2, "black");
     dog1.bark();
     dog1.sleep();
-
+    Dog dog2 =dog1;
+    dog2.bark();
     Cat cat1("Thomas", &deiana, 4);
     cat1.eat();
     cat1.meow();
