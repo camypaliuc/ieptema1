@@ -59,6 +59,9 @@ class Dog: public Animal
         Animal(name, owner, age),
         color(color){};
         Dog& operator=(const Dog&);
+        Dog(const Dog& rhs):
+            Animal(rhs), //invoke baseclass body constructor
+            color(rhs.color){};
         void bark()
         {
             std::cout<<"Woof woof!"<<std::endl;
