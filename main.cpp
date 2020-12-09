@@ -1,4 +1,5 @@
 #include <iostream>
+#include <tr1/memory>
 using namespace std;
 
 class Uncopyable {
@@ -23,6 +24,38 @@ class Person
         const unsigned int age;
 };
 
+class Food
+{
+    public:         
+    virtual std::string getName() = 0;
+};
+class Bone: public Food
+{
+    public:
+    std::string getName()
+    {
+        return "bone";
+    }
+};
+class Milk: public Food
+{
+    public:
+    std::string getName()
+    {
+        return "milk";
+    }
+};
+//factory method
+Food* createFood(int choice)
+{
+    if (choice == 1)
+        return new Bone();
+    else
+    {
+        return new Milk();
+    }    
+}
+
 class Animal
 {
     public: 
@@ -31,13 +64,14 @@ class Animal
         owner(owner),
         age(age){};
     Animal& operator=(const Animal&);
-    void eat()
-    {
-        std::cout<<"I am eating!"<<std::endl;
-    }
+    virtual void feed() {};
     void sleep()
     {
-        std::cout<<"I am sleeping!"<<std::endl;
+        std::cout<<name<<":I am sleeping!"<<std::endl;
+    }
+    const std::string& getName()
+    {
+        return name;
     }
     protected:
         const std::string& name;
@@ -64,7 +98,13 @@ class Dog: public Animal
             color(rhs.color){};
         void bark()
         {
-            std::cout<<"Woof woof!"<<std::endl;
+            std::cout<<name<<":Woof woof!"<<std::endl;
+        }
+        void feed()
+        {
+            std::tr1::shared_ptr<Food> food (createFood(1)); // creates obj instance of Bone
+            std::cout<<name<<":I am eating a "<<food->getName()<<"! ";
+            std::cout<<"I finished eating!"<<std::endl<<std::endl;
         }
     private:
         std::string color;
@@ -82,7 +122,13 @@ class Cat: public Animal
         Cat (const std::string& name, Person *owner, unsigned int age) : Animal (name, owner,age){};
         void meow()
         {
-            std::cout<<"Meow!"<<std::endl;
+            std::cout<<name<<":Meow!"<<std::endl;
+        }
+        void feed()
+        {
+            std::tr1::shared_ptr<Food> food (createFood(2));// creates obj instance of Milk
+            std::cout<<name<<":I am eating a "<<food->getName()<<"! ";
+            std::cout<<"I finished eating!"<<std::endl<<std::endl;
         }
 };
 
@@ -95,11 +141,11 @@ int main()
     Dog dog1("Azor", &camelia, 2, "black");
     dog1.bark();
     dog1.sleep();
-    Dog dog2 =dog1;
-    dog2.bark();
+    dog1.feed();
+
     Cat cat1("Thomas", &deiana, 4);
-    cat1.eat();
     cat1.meow();
+    cat1.feed();
 
     return 0;
 }
