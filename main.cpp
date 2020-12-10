@@ -131,6 +131,23 @@ class Cat: public Animal
             std::cout<<"I finished eating!"<<std::endl<<std::endl;
         }
 };
+class Vaccinate: private Uncopyable{
+    public:
+    explicit Vaccinate(Animal *pet)
+    :petPtr(pet)
+    { lockForVaccine(petPtr);} //aquire  resource
+    ~Vaccinate(){unlock(petPtr);} //release resource
+    private:
+    void lockForVaccine(Animal *pet)
+    {
+        std::cout<<pet->getName()<<" locked in a cage for vaccine!"<<std::endl;
+    }
+    void unlock(Animal *pet)
+    {
+    std::cout<<pet->getName()<< " vaccinated and unlocked!"<<std::endl;
+    }
+    Animal *petPtr;
+};
 
 int main()
 {
@@ -142,10 +159,11 @@ int main()
     dog1.bark();
     dog1.sleep();
     dog1.feed();
+    Vaccinate v1 (&dog1);
 
     Cat cat1("Thomas", &deiana, 4);
     cat1.meow();
     cat1.feed();
-
+    Vaccinate v2 (&cat1);
     return 0;
 }
